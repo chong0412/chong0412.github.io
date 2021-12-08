@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>markdown基础</title>
+    <url>/2021/12/08/markdownBasic/</url>
+    <content><![CDATA[<h1> 一级标题
+<h5> 五级标题
+
+<p>这里会**??加粗**</p>
+<p><del>删除</del></p>
+<ul>
+<li>第一<ul>
+<li>1.1 </li>
+</ul>
+</li>
+<li>第二</li>
+<li>第三</li>
+</ul>
+<ol>
+<li>第一<br> 1.1<br> 1.2</li>
+</ol>
+<p><img src="/bg.jpg" alt="GitHub Logo"><br>Format: <img src="url" alt="Alt Text"></p>
+<p>链接：<br><a href="https://github.com/">GitHub</a></p>
+<p>标黄：<br>==marked==</p>
+<p>分割线：</p>
+<hr>
+<p>代码块：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hello world!&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>Test</category>
+      </categories>
+      <tags>
+        <tag>Test</tag>
+      </tags>
+  </entry>
+</search>
