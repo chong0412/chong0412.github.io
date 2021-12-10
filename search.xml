@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>本站第一篇博客</title>
+    <url>/2021/12/08/firstBlog/</url>
+    <content><![CDATA[<p>按照惯例，说一声“你好，世界！”：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hello world!&quot;</span>)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<hr>
+<p>虽然身在考试周、好多大作业没有做，但不知为何突发奇想想做一个个人博客，其实就仅仅就是突发奇想，大概率不会坚持写下去。总之，查了一下发现用hexo+github还挺简单的，网上也有许多教程，于是乎就放下作业，专心建站，CSDN、b站上有许多教程，想不会都难，所以过程也没有什么好记录的。</p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>碎碎念</tag>
+        <tag>life</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>pytorch神经网络基础</title>
     <url>/2021/12/09/pytorch_network_basic/</url>
     <content><![CDATA[<ul>
@@ -13,7 +30,7 @@
 </ul>
 </li>
 <li>自定义层</li>
-<li>文件读取<span id="more"></span></li>
+<li>模型文件读写<span id="more"></span></li>
 </ul>
 <hr>
 <h2 id="1-模型构造"><a href="#1-模型构造" class="headerlink" title="1. 模型构造"></a>1. 模型构造</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br></pre></td></tr></table></figure>
@@ -38,29 +55,16 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">shared = nn.Linear(<span class="number">256</span>,<span class="number">256</span>)</span><br><span class="line">net = nn.Sequential(nn.Linear(<span class="number">20</span>,<span class="number">256</span>),nn.ReLU(),shared,nn.ReLU(),shared,nn.ReLU(),nn.Linear(<span class="number">256</span>,<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(net(X))</span><br></pre></td></tr></table></figure>
 
 <h2 id="3-自定义层"><a href="#3-自定义层" class="headerlink" title="3. 自定义层"></a>3. 自定义层</h2><p>与自定义网络没有本质区别，课程中主要包括不设置参数（weight、bias）的层与设置参数的层。<br>自定义层:<a href="https://www.bilibili.com/video/BV1AK4y1P7vs?p=3">https://www.bilibili.com/video/BV1AK4y1P7vs?p=3</a></p>
+<h2 id="4-模型文件读写"><a href="#4-模型文件读写" class="headerlink" title="4. 模型文件读写"></a>4. 模型文件读写</h2><p>save： <code>torch.save(net.state_dict(),&#39;fileName&#39;)</code><br>load： <code>newNet.load_state_dict(torch.load(&#39;fileName&#39;))</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">net=MLP()</span><br><span class="line">torch.save(net.state_dict(),<span class="string">&#x27;MLP.params&#x27;</span>) <span class="comment"># save</span></span><br><span class="line">X=torch.randn(size=(<span class="number">2</span>,<span class="number">20</span>))</span><br><span class="line">Y=net(X)</span><br><span class="line">clone = MLP() <span class="comment"># 注意，需要先初始化一个相同的网络</span></span><br><span class="line">clone.load_state_dict(torch.load(<span class="string">&#x27;MLP.params&#x27;</span>)) <span class="comment"># load</span></span><br><span class="line">Y_clone = clone(X)</span><br></pre></td></tr></table></figure>
+
+
 ]]></content>
       <categories>
         <category>AI</category>
       </categories>
       <tags>
         <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>本站第一篇博客</title>
-    <url>/2021/12/08/firstBlog/</url>
-    <content><![CDATA[<p>按照惯例，说一声“你好，世界！”：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hello world!&quot;</span>)</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<hr>
-<p>虽然身在考试周、好多大作业没有做，但不知为何突发奇想想做一个个人博客，其实就仅仅就是突发奇想，大概率不会坚持写下去。总之，查了一下发现用hexo+github还挺简单的，网上也有许多教程，于是乎就放下作业，专心建站，CSDN、b站上有许多教程，想不会都难，所以过程也没有什么好记录的。</p>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>碎碎念</tag>
-        <tag>life</tag>
       </tags>
   </entry>
 </search>
