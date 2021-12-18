@@ -1,25 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>本站第一篇博客</title>
-    <url>/2021/12/08/firstBlog/</url>
-    <content><![CDATA[<p>按照惯例，说一声“你好，世界！”：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hello world!&quot;</span>)</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<hr>
-<p>虽然身在考试周、好多大作业没有做，但不知为何突发奇想想做一个个人博客，其实就仅仅就是突发奇想，大概率不会坚持写下去。总之，查了一下发现用hexo+github还挺简单的，网上也有许多教程，于是乎就放下作业，专心建站，CSDN、b站上有许多教程，想不会都难，所以过程也没有什么好记录的。</p>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>碎碎念</tag>
-        <tag>life</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>pytorch神经网络基础</title>
-    <url>/2021/12/09/pytorch_network_basic/</url>
+    <url>/2021/12/09/2_pytorch_network_basic/</url>
     <content><![CDATA[<ul>
 <li>模型构造<ul>
 <li>自定义块 | 序列块 | 网络的嵌套</li>
@@ -59,6 +42,112 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">net=MLP()</span><br><span class="line">torch.save(net.state_dict(),<span class="string">&#x27;MLP.params&#x27;</span>) <span class="comment"># save</span></span><br><span class="line">X=torch.randn(size=(<span class="number">2</span>,<span class="number">20</span>))</span><br><span class="line">Y=net(X)</span><br><span class="line">clone = MLP() <span class="comment"># 注意，需要先初始化一个相同的网络</span></span><br><span class="line">clone.load_state_dict(torch.load(<span class="string">&#x27;MLP.params&#x27;</span>)) <span class="comment"># load</span></span><br><span class="line">Y_clone = clone(X)</span><br></pre></td></tr></table></figure>
 
 
+]]></content>
+      <categories>
+        <category>AI</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>本站第一篇博客</title>
+    <url>/2021/12/08/1_firstBlog/</url>
+    <content><![CDATA[<p>按照惯例，说一声“你好，世界！”：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hello world!&quot;</span>)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<hr>
+<p>虽然身在考试周、好多大作业没有做，但不知为何突发奇想想做一个个人博客，其实就仅仅就是突发奇想，大概率不会坚持写下去。总之，查了一下发现用hexo+github还挺简单的，网上也有许多教程，于是乎就放下作业，专心建站，CSDN、b站上有许多教程，想不会都难，所以过程也没有什么好记录的。</p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>碎碎念</tag>
+        <tag>life</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>配置服务器实验环境</title>
+    <url>/2021/12/17/4_env/</url>
+    <content><![CDATA[<ul>
+<li>Anaconda3</li>
+<li>Cuda 11.3 (用户级别)</li>
+<li>Pytorch 1.10<span id="more"></span></li>
+</ul>
+<hr>
+<h2>1. Anaconda3</h2>
+
+<p>可以在官网选择linux下最新版本下载（<a href="https://www.anaconda.com/products/individual">https://www.anaconda.com/products/individual</a> ），不过下载完成后再上传到服务器会很慢，可以在官网获取安装包链接，通过wget下载即可。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://repo.anaconda.com/archive/Anaconda3-2021.11-Linux-x86_64.sh</span><br></pre></td></tr></table></figure>
+
+<p>下载完成后，执行下面命令安装，安装完成后输入conda命令检查是否安装成功。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">bash anaconda***.sh</span><br></pre></td></tr></table></figure>
+<p>接下来创建虚拟环境。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">创建虚拟环境：conda create -n your_env_name python=x.x</span><br><span class="line">查看环境：conda env list</span><br><span class="line">进入环境：conda activate your_env_name</span><br><span class="line">退出环境：conda deactivate</span><br></pre></td></tr></table></figure>
+
+<h2>2. Cuda 11.3</h2>
+需要注意的是，是在__自己的账户下安装cuda__；
+
+<p>不同的显卡对应不同的cuda版本，我需要安装的是cuda11.3。</p>
+<h4>2.1 下载</h4>
+在官网选择需要的版本(https://developer.nvidia.cn/cuda-downloads)下载即可，选择runfile，会直接给出下载安装方式，例如：
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">wget https://developer.download.nvidia.com/compute/cuda/11.5.1/local_installers/cuda_11.5.1_495.29.05_linux.run</span><br><span class="line">sudo sh cuda_11.5.1_495.29.05_linux.run(此处，先不执行安装)</span><br></pre></td></tr></table></figure>
+
+<h4>2.2 更改文件执行权限</h4>
+进入到安装目录下，使用`chmod 755 cuda_10.2.89_440.33.01_linux.run`更改文件的执行权限。
+
+<h4>2.3 安装</h4>
+因为不是管理员，安装时直接`sh cuda_11.5.1_495.29.05_linux.run`即可。
+
+<p>因为安装的是用户级别的，在安装时需要注意一些细节，<strong>建议执行上述安装命令时，先详细参考</strong><a href="https://blog.csdn.net/qq_35082030/article/details/110387800">https://blog.csdn.net/qq_35082030/article/details/110387800</a> 的第5点，注意需要提前新建一些文件夹、安装时的具体选择等，然后再安装。</p>
+<h4>2.4 配置</h4>
+我连接服务器用的是 `FinalShell`，可以打开`.bashrc`文件修改，如果熟悉vim操作的话直接修改即可。
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=<span class="string">&quot;/home/[用户名]/usr/local/cuda-11.3/bin:<span class="variable">$PATH</span>&quot;</span></span><br><span class="line"><span class="built_in">export</span> LD_LIBRARY_PATH=<span class="string">&quot;/home/[用户名]/usr/local/cuda-11.3/lib64:/home/[用户名]/usr/local/cuda-11.3/mylib/lib64:<span class="variable">$LD_LIBRARY_PATH</span>&quot;</span></span><br></pre></td></tr></table></figure>
+修改完成后，执行`source .bashrc`使配置生效，执行`nvcc -V`检查是否安装成功。
+
+<h2>3. pytorch</h2>
+在创建好的虚拟环境下，安装pytorch即可，直接安装会很慢，建议**更换镜像源**后再安装。
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">conda install pytorch torchvision torchaudio cudatoolkit=11.3</span><br></pre></td></tr></table></figure>
+检查pytorch是否安装成功、是否可以使用cuda。
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line">torch.cuda.is_available()</span><br></pre></td></tr></table></figure>
+
+
+
+
+]]></content>
+      <categories>
+        <category>AI</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>优化算法</title>
+    <url>/2021/12/17/3_Optimization_Algorithm/</url>
+    <content><![CDATA[<p><a href="https://blog.csdn.net/manong_wxd/article/details/78735439">各种优化算法简介</a></p>
+<p><a href="https://www.bilibili.com/video/BV1bP4y1p7Gq?spm_id_from=333.999.0.0">李沐的课 | 优化算法部分</a></p>
+<span id="more"></span>
+<hr>
+<ul>
+<li><p>梯度下降（GD）：对整个样本计算一次后，更新一次参数</p>
+</li>
+<li><p>随机梯度下降（SGD）：每计算一次样本，更新一次参数</p>
+</li>
+<li><p>小批量随机梯度下降：GD和SGD的折中</p>
+<ul>
+<li>超参数：batch_size | learning_rate</li>
+</ul>
+</li>
+<li><p>冲量法（momentum）：使用平滑过的梯度对权重更新</p>
+</li>
+<li><p><strong>adam</strong>：同样也是对梯度做平滑，不仅对小批量梯度（MSGD）做了指数加权平均（momentum），还对小批量梯度平方做了指数加权平均（RMSprop)。除此之外，引入了偏差修正，整体效果上来说是诸多算法中最优的一个。对学习率不敏感，<strong>使用的最多</strong></p>
+<ul>
+<li>超参数：batch_size | learning_rate | beta1 | beta2</li>
+</ul>
+</li>
+</ul>
 ]]></content>
       <categories>
         <category>AI</category>
