@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>本站第一篇博客</title>
+    <url>/2021/12/08/1_firstBlog/</url>
+    <content><![CDATA[<p>按照惯例，说一声“你好，世界！”：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hello world!&quot;</span>)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<hr>
+<p>虽然身在考试周、好多大作业没有做，但不知为何突发奇想想做一个个人博客，其实就仅仅就是突发奇想，大概率不会坚持写下去。总之，查了一下发现用hexo+github还挺简单的，网上也有许多教程，于是乎就放下作业，专心建站，CSDN、b站上有许多教程，想不会都难，所以过程也没有什么好记录的。</p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>碎碎念</tag>
+        <tag>life</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>pytorch神经网络基础</title>
     <url>/2021/12/09/2_pytorch_network_basic/</url>
     <content><![CDATA[<ul>
@@ -51,25 +68,41 @@
       </tags>
   </entry>
   <entry>
-    <title>本站第一篇博客</title>
-    <url>/2021/12/08/1_firstBlog/</url>
-    <content><![CDATA[<p>按照惯例，说一声“你好，世界！”：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hello world!&quot;</span>)</span><br></pre></td></tr></table></figure>
+    <title>优化算法</title>
+    <url>/2021/12/17/3_Optimization_Algorithm/</url>
+    <content><![CDATA[<p><a href="https://blog.csdn.net/manong_wxd/article/details/78735439">各种优化算法简介</a></p>
+<p><a href="https://www.bilibili.com/video/BV1bP4y1p7Gq?spm_id_from=333.999.0.0">李沐的课 | 优化算法部分</a></p>
 <span id="more"></span>
 <hr>
-<p>虽然身在考试周、好多大作业没有做，但不知为何突发奇想想做一个个人博客，其实就仅仅就是突发奇想，大概率不会坚持写下去。总之，查了一下发现用hexo+github还挺简单的，网上也有许多教程，于是乎就放下作业，专心建站，CSDN、b站上有许多教程，想不会都难，所以过程也没有什么好记录的。</p>
+<ul>
+<li><p>梯度下降（GD）：对整个样本计算一次后，更新一次参数</p>
+</li>
+<li><p>随机梯度下降（SGD）：每计算一次样本，更新一次参数</p>
+</li>
+<li><p>小批量随机梯度下降：GD和SGD的折中</p>
+<ul>
+<li>超参数：batch_size | learning_rate</li>
+</ul>
+</li>
+<li><p>冲量法（momentum）：使用平滑过的梯度对权重更新</p>
+</li>
+<li><p><strong>adam</strong>：同样也是对梯度做平滑，不仅对小批量梯度（MSGD）做了指数加权平均（momentum），还对小批量梯度平方做了指数加权平均（RMSprop)。除此之外，引入了偏差修正，整体效果上来说是诸多算法中最优的一个。对学习率不敏感，<strong>使用的最多</strong></p>
+<ul>
+<li>超参数：batch_size | learning_rate | beta1 | beta2</li>
+</ul>
+</li>
+</ul>
 ]]></content>
       <categories>
-        <category>Life</category>
+        <category>AI</category>
       </categories>
       <tags>
-        <tag>碎碎念</tag>
-        <tag>life</tag>
+        <tag>pytorch</tag>
       </tags>
   </entry>
   <entry>
     <title>配置服务器实验环境</title>
-    <url>/2021/12/17/4_env/</url>
+    <url>/2021/12/18/4_env/</url>
     <content><![CDATA[<ul>
 <li>Anaconda3</li>
 <li>Cuda 11.3 (用户级别)</li>
@@ -115,39 +148,6 @@
 
 
 
-]]></content>
-      <categories>
-        <category>AI</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>优化算法</title>
-    <url>/2021/12/17/3_Optimization_Algorithm/</url>
-    <content><![CDATA[<p><a href="https://blog.csdn.net/manong_wxd/article/details/78735439">各种优化算法简介</a></p>
-<p><a href="https://www.bilibili.com/video/BV1bP4y1p7Gq?spm_id_from=333.999.0.0">李沐的课 | 优化算法部分</a></p>
-<span id="more"></span>
-<hr>
-<ul>
-<li><p>梯度下降（GD）：对整个样本计算一次后，更新一次参数</p>
-</li>
-<li><p>随机梯度下降（SGD）：每计算一次样本，更新一次参数</p>
-</li>
-<li><p>小批量随机梯度下降：GD和SGD的折中</p>
-<ul>
-<li>超参数：batch_size | learning_rate</li>
-</ul>
-</li>
-<li><p>冲量法（momentum）：使用平滑过的梯度对权重更新</p>
-</li>
-<li><p><strong>adam</strong>：同样也是对梯度做平滑，不仅对小批量梯度（MSGD）做了指数加权平均（momentum），还对小批量梯度平方做了指数加权平均（RMSprop)。除此之外，引入了偏差修正，整体效果上来说是诸多算法中最优的一个。对学习率不敏感，<strong>使用的最多</strong></p>
-<ul>
-<li>超参数：batch_size | learning_rate | beta1 | beta2</li>
-</ul>
-</li>
-</ul>
 ]]></content>
       <categories>
         <category>AI</category>
