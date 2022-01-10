@@ -18,6 +18,39 @@
       </tags>
   </entry>
   <entry>
+    <title>优化算法</title>
+    <url>/2021/12/17/3_Optimization_Algorithm/</url>
+    <content><![CDATA[<p><a href="https://blog.csdn.net/manong_wxd/article/details/78735439">各种优化算法简介</a></p>
+<p><a href="https://www.bilibili.com/video/BV1bP4y1p7Gq?spm_id_from=333.999.0.0">李沐的课 | 优化算法部分</a></p>
+<span id="more"></span>
+<hr>
+<ul>
+<li><p>梯度下降（GD）：对整个样本计算一次后，更新一次参数</p>
+</li>
+<li><p>随机梯度下降（SGD）：每计算一次样本，更新一次参数</p>
+</li>
+<li><p>小批量随机梯度下降：GD和SGD的折中</p>
+<ul>
+<li>超参数：batch_size | learning_rate</li>
+</ul>
+</li>
+<li><p>冲量法（momentum）：使用平滑过的梯度对权重更新</p>
+</li>
+<li><p><strong>adam</strong>：同样也是对梯度做平滑，不仅对小批量梯度（MSGD）做了指数加权平均（momentum），还对小批量梯度平方做了指数加权平均（RMSprop)。除此之外，引入了偏差修正，整体效果上来说是诸多算法中最优的一个。对学习率不敏感，<strong>使用的最多</strong></p>
+<ul>
+<li>超参数：batch_size | learning_rate | beta1 | beta2</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>AI</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>pytorch神经网络基础</title>
     <url>/2021/12/09/2_pytorch_network_basic/</url>
     <content><![CDATA[<ul>
@@ -59,39 +92,6 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">net=MLP()</span><br><span class="line">torch.save(net.state_dict(),<span class="string">&#x27;MLP.params&#x27;</span>) <span class="comment"># save</span></span><br><span class="line">X=torch.randn(size=(<span class="number">2</span>,<span class="number">20</span>))</span><br><span class="line">Y=net(X)</span><br><span class="line">clone = MLP() <span class="comment"># 注意，需要先初始化一个相同的网络</span></span><br><span class="line">clone.load_state_dict(torch.load(<span class="string">&#x27;MLP.params&#x27;</span>)) <span class="comment"># load</span></span><br><span class="line">Y_clone = clone(X)</span><br></pre></td></tr></table></figure>
 
 
-]]></content>
-      <categories>
-        <category>AI</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>优化算法</title>
-    <url>/2021/12/17/3_Optimization_Algorithm/</url>
-    <content><![CDATA[<p><a href="https://blog.csdn.net/manong_wxd/article/details/78735439">各种优化算法简介</a></p>
-<p><a href="https://www.bilibili.com/video/BV1bP4y1p7Gq?spm_id_from=333.999.0.0">李沐的课 | 优化算法部分</a></p>
-<span id="more"></span>
-<hr>
-<ul>
-<li><p>梯度下降（GD）：对整个样本计算一次后，更新一次参数</p>
-</li>
-<li><p>随机梯度下降（SGD）：每计算一次样本，更新一次参数</p>
-</li>
-<li><p>小批量随机梯度下降：GD和SGD的折中</p>
-<ul>
-<li>超参数：batch_size | learning_rate</li>
-</ul>
-</li>
-<li><p>冲量法（momentum）：使用平滑过的梯度对权重更新</p>
-</li>
-<li><p><strong>adam</strong>：同样也是对梯度做平滑，不仅对小批量梯度（MSGD）做了指数加权平均（momentum），还对小批量梯度平方做了指数加权平均（RMSprop)。除此之外，引入了偏差修正，整体效果上来说是诸多算法中最优的一个。对学习率不敏感，<strong>使用的最多</strong></p>
-<ul>
-<li>超参数：batch_size | learning_rate | beta1 | beta2</li>
-</ul>
-</li>
-</ul>
 ]]></content>
       <categories>
         <category>AI</category>
