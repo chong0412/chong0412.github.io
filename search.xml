@@ -1,23 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>本站第一篇博客</title>
-    <url>/2021/12/08/1_firstBlog/</url>
-    <content><![CDATA[<p>按照惯例，说一声“你好，世界！”：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hello world!&quot;</span>)</span><br></pre></td></tr></table></figure>
-<span id="more"></span>
-<hr>
-<p>虽然身在考试周、好多大作业没有做，但不知为何突发奇想想做一个个人博客，其实就仅仅就是突发奇想，大概率不会坚持写下去。总之，查了一下发现用hexo+github还挺简单的，网上也有许多教程，于是乎就放下作业，专心建站，CSDN、b站上有许多教程，想不会都难，所以过程也没有什么好记录的。</p>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>碎碎念</tag>
-        <tag>life</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>pytorch神经网络基础</title>
     <url>/2021/12/09/2_pytorch_network_basic/</url>
     <content><![CDATA[<ul>
@@ -157,6 +140,23 @@
       </tags>
   </entry>
   <entry>
+    <title>本站第一篇博客</title>
+    <url>/2021/12/08/1_firstBlog/</url>
+    <content><![CDATA[<p>按照惯例，说一声“你好，世界！”：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hello world!&quot;</span>)</span><br></pre></td></tr></table></figure>
+<span id="more"></span>
+<hr>
+<p>虽然身在考试周、好多大作业没有做，但不知为何突发奇想想做一个个人博客，其实就仅仅就是突发奇想，大概率不会坚持写下去。总之，查了一下发现用hexo+github还挺简单的，网上也有许多教程，于是乎就放下作业，专心建站，CSDN、b站上有许多教程，想不会都难，所以过程也没有什么好记录的。</p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>碎碎念</tag>
+        <tag>life</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>hexo+next 一些特定的样式</title>
     <url>/2022/01/10/6_advancedcss/</url>
     <content><![CDATA[<blockquote class="blockquote-center">
@@ -164,8 +164,8 @@
 </blockquote>
 <span id="more"></span>
 ___
-## 文本居中引用
-<blockquote class="blockquote-center">
+
+<h2 id="文本居中引用"><a href="#文本居中引用" class="headerlink" title="文本居中引用"></a>文本居中引用</h2><blockquote class="blockquote-center">
 允公允能 日新月异
 </blockquote>
 
@@ -184,6 +184,8 @@ ___
 
 <h2 id="数学公式"><a href="#数学公式" class="headerlink" title="数学公式"></a>数学公式</h2><p>使用mathjax写数学公式。<br>$$\Gamma(z) = \int_0^\infty t^{z-1}e^{-t}dt$$<br>$$x=a_0 + \frac {1^2}{a_1 + \frac {2^2}{a_2 + \frac {3^2}{a_3 + \frac {4^2}{a_4 + …}}}}$$</p>
 <h2 id="代码显示"><a href="#代码显示" class="headerlink" title="代码显示"></a>代码显示</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&quot;hello world!&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="内置pdf插件"><a href="#内置pdf插件" class="headerlink" title="内置pdf插件"></a>内置pdf插件</h2><div class="pdf-container" data-target="https://proceedings.neurips.cc/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf" data-height="500px"></div>
 
 
 ]]></content>
