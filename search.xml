@@ -18,56 +18,6 @@
       </tags>
   </entry>
   <entry>
-    <title>pytorch神经网络基础</title>
-    <url>/2021/12/09/2_pytorch_network_basic/</url>
-    <content><![CDATA[<ul>
-<li>模型构造<ul>
-<li>自定义块 | 序列块 | 网络的嵌套</li>
-</ul>
-</li>
-<li>参数管理<ul>
-<li>参数访问 | 参数初始化 | 参数绑定</li>
-</ul>
-</li>
-<li>自定义层</li>
-<li>模型文件读写<span id="more"></span></li>
-</ul>
-<hr>
-<h2 id="1-模型构造"><a href="#1-模型构造" class="headerlink" title="1. 模型构造"></a>1. 模型构造</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br></pre></td></tr></table></figure>
-<p>functional是torch定义好的一些函数的类，一些常用的函数可以直接调用nn中还定义了一个特殊的Module，作为默认的父类，在定义网络时都需要写上自定义的网络，一般都包括两个部分，网络层的定义 + forward。<br>####1.1 自定义块 </p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MLP</span>(<span class="params">nn.Module</span>):</span> <span class="comment"># 自定义 MLP 作为 nn.Module 的子类</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="built_in">super</span>().__init__() <span class="comment"># nn.Module的初始化函数</span></span><br><span class="line">        self.hidden = nn.Linear(<span class="number">20</span>, <span class="number">256</span>)</span><br><span class="line">        self.out = nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, X</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.out(F.relu(self.hidden(X)))  <span class="comment"># X|隐藏层|relu|输出层</span></span><br><span class="line"></span><br><span class="line">X=torch.rand(<span class="number">2</span>,<span class="number">20</span>)</span><br><span class="line">net = MLP()</span><br><span class="line"><span class="built_in">print</span>(X)</span><br><span class="line"><span class="built_in">print</span>(net(X))</span><br></pre></td></tr></table></figure>
-
-<p>####1.2 序列块<br>在init和forward中可以定义很多的计算，序列块实际上不常用。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mySequential</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, *args</span>):</span></span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="keyword">for</span> block <span class="keyword">in</span> args:</span><br><span class="line">            self._modules[block] = block <span class="comment"># self._modules 是 nn.Module 构造好的成员变量，dict类型</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, X</span>):</span></span><br><span class="line">        <span class="keyword">for</span> block <span class="keyword">in</span> self._modules.values():</span><br><span class="line">            X = block(X)</span><br><span class="line">        <span class="keyword">return</span> X</span><br><span class="line"></span><br><span class="line">net = mySequential(nn.Linear(<span class="number">20</span>, <span class="number">256</span>), nn.ReLU(), nn.Linear(<span class="number">256</span>, <span class="number">10</span>))</span><br><span class="line"><span class="built_in">print</span>(net(X))</span><br></pre></td></tr></table></figure>
-
-<p>####1.3 网络的嵌套</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">nestMLP</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.nestHidden = MLP() <span class="comment"># 嵌套上面定义的 MLP</span></span><br><span class="line">        self.out = nn.Linear(<span class="number">10</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, X</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.out(F.relu(self.nestHidden(X)))  <span class="comment"># X|嵌套自定义的MLP|relu|输出层</span></span><br><span class="line"></span><br><span class="line">net = nestMLP()</span><br><span class="line"><span class="built_in">print</span>(net(X))</span><br></pre></td></tr></table></figure>
-<p>还可直接打印出网络结构。当模型比较复杂的时候，建议<strong>模块化地定义网络</strong>，更方便查找问题。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(net)</span><br></pre></td></tr></table></figure>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nestMLP(</span><br><span class="line">  (nestHidden): MLP(</span><br><span class="line">    (hidden): Linear(in_features=20, out_features=256, bias=True)</span><br><span class="line">    (out): Linear(in_features=256, out_features=10, bias=True)</span><br><span class="line">  )</span><br><span class="line">  (out): Linear(in_features=10, out_features=5, bias=True)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<h2 id="2-参数管理"><a href="#2-参数管理" class="headerlink" title="2. 参数管理"></a>2. 参数管理</h2><p>####2.1 参数访问<br>需要先指导参数的名字，然后通过<code>net.state_dict()[&#39;&#39;]</code>访问</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> name, parameters <span class="keyword">in</span> net.named_parameters():</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="string">&#x27;:&#x27;</span>, parameters.size())</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(net.state_dict()[<span class="string">&#x27;nestHidden.hidden.weight&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(net.state_dict()[<span class="string">&#x27;out.bias&#x27;</span>])</span><br></pre></td></tr></table></figure>
-<p>####2.2 参数初始化</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_normal</span>(<span class="params">m</span>):</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(m) == nn.Linear: <span class="comment"># 仅对Linear层初始化参数</span></span><br><span class="line">        nn.init.normal_(m.weight, mean=<span class="number">0</span>, std=<span class="number">0.01</span>)</span><br><span class="line">        nn.init.zeros_(m.bias)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_xavier</span>(<span class="params">m</span>):</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(m) == nn.Linear:</span><br><span class="line">        nn.init.xavier_uniform_(m.weight) <span class="comment"># 使用xavier初始化参数</span></span><br><span class="line"></span><br><span class="line">net.apply(init_xavier) <span class="comment"># apply会遍历net中的每一个module，对参数进行xavier初始化</span></span><br></pre></td></tr></table></figure>
-
-<p>####2.3 参数绑定<br>下例中，net的两个shared参数相同，即共享参数。</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">shared = nn.Linear(<span class="number">256</span>,<span class="number">256</span>)</span><br><span class="line">net = nn.Sequential(nn.Linear(<span class="number">20</span>,<span class="number">256</span>),nn.ReLU(),shared,nn.ReLU(),shared,nn.ReLU(),nn.Linear(<span class="number">256</span>,<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(net(X))</span><br></pre></td></tr></table></figure>
-
-<h2 id="3-自定义层"><a href="#3-自定义层" class="headerlink" title="3. 自定义层"></a>3. 自定义层</h2><p>与自定义网络没有本质区别，课程中主要包括不设置参数（weight、bias）的层与设置参数的层。<br>自定义层:<a href="https://www.bilibili.com/video/BV1AK4y1P7vs?p=3">https://www.bilibili.com/video/BV1AK4y1P7vs?p=3</a></p>
-<h2 id="4-模型文件读写"><a href="#4-模型文件读写" class="headerlink" title="4. 模型文件读写"></a>4. 模型文件读写</h2><p>save： <code>torch.save(net.state_dict(),&#39;fileName&#39;)</code><br>load： <code>newNet.load_state_dict(torch.load(&#39;fileName&#39;))</code></p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">net=MLP()</span><br><span class="line">torch.save(net.state_dict(),<span class="string">&#x27;MLP.params&#x27;</span>) <span class="comment"># save</span></span><br><span class="line">X=torch.randn(size=(<span class="number">2</span>,<span class="number">20</span>))</span><br><span class="line">Y=net(X)</span><br><span class="line">clone = MLP() <span class="comment"># 注意，需要先初始化一个相同的网络</span></span><br><span class="line">clone.load_state_dict(torch.load(<span class="string">&#x27;MLP.params&#x27;</span>)) <span class="comment"># load</span></span><br><span class="line">Y_clone = clone(X)</span><br></pre></td></tr></table></figure>
-
-
-]]></content>
-      <categories>
-        <category>AI</category>
-      </categories>
-      <tags>
-        <tag>pytorch</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>优化算法</title>
     <url>/2021/12/17/3_Optimization_Algorithm/</url>
     <content><![CDATA[<p><a href="https://blog.csdn.net/manong_wxd/article/details/78735439">各种优化算法简介</a></p>
@@ -157,6 +107,128 @@
       </tags>
   </entry>
   <entry>
+    <title>pytorch神经网络基础</title>
+    <url>/2021/12/09/2_pytorch_network_basic/</url>
+    <content><![CDATA[<ul>
+<li>模型构造<ul>
+<li>自定义块 | 序列块 | 网络的嵌套</li>
+</ul>
+</li>
+<li>参数管理<ul>
+<li>参数访问 | 参数初始化 | 参数绑定</li>
+</ul>
+</li>
+<li>自定义层</li>
+<li>模型文件读写<span id="more"></span></li>
+</ul>
+<hr>
+<h2 id="1-模型构造"><a href="#1-模型构造" class="headerlink" title="1. 模型构造"></a>1. 模型构造</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> functional <span class="keyword">as</span> F</span><br></pre></td></tr></table></figure>
+<p>functional是torch定义好的一些函数的类，一些常用的函数可以直接调用nn中还定义了一个特殊的Module，作为默认的父类，在定义网络时都需要写上自定义的网络，一般都包括两个部分，网络层的定义 + forward。<br>####1.1 自定义块 </p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MLP</span>(<span class="params">nn.Module</span>):</span> <span class="comment"># 自定义 MLP 作为 nn.Module 的子类</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="built_in">super</span>().__init__() <span class="comment"># nn.Module的初始化函数</span></span><br><span class="line">        self.hidden = nn.Linear(<span class="number">20</span>, <span class="number">256</span>)</span><br><span class="line">        self.out = nn.Linear(<span class="number">256</span>, <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, X</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.out(F.relu(self.hidden(X)))  <span class="comment"># X|隐藏层|relu|输出层</span></span><br><span class="line"></span><br><span class="line">X=torch.rand(<span class="number">2</span>,<span class="number">20</span>)</span><br><span class="line">net = MLP()</span><br><span class="line"><span class="built_in">print</span>(X)</span><br><span class="line"><span class="built_in">print</span>(net(X))</span><br></pre></td></tr></table></figure>
+
+<p>####1.2 序列块<br>在init和forward中可以定义很多的计算，序列块实际上不常用。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">mySequential</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, *args</span>):</span></span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        <span class="keyword">for</span> block <span class="keyword">in</span> args:</span><br><span class="line">            self._modules[block] = block <span class="comment"># self._modules 是 nn.Module 构造好的成员变量，dict类型</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, X</span>):</span></span><br><span class="line">        <span class="keyword">for</span> block <span class="keyword">in</span> self._modules.values():</span><br><span class="line">            X = block(X)</span><br><span class="line">        <span class="keyword">return</span> X</span><br><span class="line"></span><br><span class="line">net = mySequential(nn.Linear(<span class="number">20</span>, <span class="number">256</span>), nn.ReLU(), nn.Linear(<span class="number">256</span>, <span class="number">10</span>))</span><br><span class="line"><span class="built_in">print</span>(net(X))</span><br></pre></td></tr></table></figure>
+
+<p>####1.3 网络的嵌套</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">nestMLP</span>(<span class="params">nn.Module</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.nestHidden = MLP() <span class="comment"># 嵌套上面定义的 MLP</span></span><br><span class="line">        self.out = nn.Linear(<span class="number">10</span>, <span class="number">5</span>)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, X</span>):</span></span><br><span class="line">        <span class="keyword">return</span> self.out(F.relu(self.nestHidden(X)))  <span class="comment"># X|嵌套自定义的MLP|relu|输出层</span></span><br><span class="line"></span><br><span class="line">net = nestMLP()</span><br><span class="line"><span class="built_in">print</span>(net(X))</span><br></pre></td></tr></table></figure>
+<p>还可直接打印出网络结构。当模型比较复杂的时候，建议<strong>模块化地定义网络</strong>，更方便查找问题。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="built_in">print</span>(net)</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">nestMLP(</span><br><span class="line">  (nestHidden): MLP(</span><br><span class="line">    (hidden): Linear(in_features=20, out_features=256, bias=True)</span><br><span class="line">    (out): Linear(in_features=256, out_features=10, bias=True)</span><br><span class="line">  )</span><br><span class="line">  (out): Linear(in_features=10, out_features=5, bias=True)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-参数管理"><a href="#2-参数管理" class="headerlink" title="2. 参数管理"></a>2. 参数管理</h2><p>####2.1 参数访问<br>需要先指导参数的名字，然后通过<code>net.state_dict()[&#39;&#39;]</code>访问</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">for</span> name, parameters <span class="keyword">in</span> net.named_parameters():</span><br><span class="line">    <span class="built_in">print</span>(name, <span class="string">&#x27;:&#x27;</span>, parameters.size())</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(net.state_dict()[<span class="string">&#x27;nestHidden.hidden.weight&#x27;</span>])</span><br><span class="line"><span class="built_in">print</span>(net.state_dict()[<span class="string">&#x27;out.bias&#x27;</span>])</span><br></pre></td></tr></table></figure>
+<p>####2.2 参数初始化</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_normal</span>(<span class="params">m</span>):</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(m) == nn.Linear: <span class="comment"># 仅对Linear层初始化参数</span></span><br><span class="line">        nn.init.normal_(m.weight, mean=<span class="number">0</span>, std=<span class="number">0.01</span>)</span><br><span class="line">        nn.init.zeros_(m.bias)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init_xavier</span>(<span class="params">m</span>):</span></span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">type</span>(m) == nn.Linear:</span><br><span class="line">        nn.init.xavier_uniform_(m.weight) <span class="comment"># 使用xavier初始化参数</span></span><br><span class="line"></span><br><span class="line">net.apply(init_xavier) <span class="comment"># apply会遍历net中的每一个module，对参数进行xavier初始化</span></span><br></pre></td></tr></table></figure>
+
+<p>####2.3 参数绑定<br>下例中，net的两个shared参数相同，即共享参数。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">shared = nn.Linear(<span class="number">256</span>,<span class="number">256</span>)</span><br><span class="line">net = nn.Sequential(nn.Linear(<span class="number">20</span>,<span class="number">256</span>),nn.ReLU(),shared,nn.ReLU(),shared,nn.ReLU(),nn.Linear(<span class="number">256</span>,<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(net(X))</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-自定义层"><a href="#3-自定义层" class="headerlink" title="3. 自定义层"></a>3. 自定义层</h2><p>与自定义网络没有本质区别，课程中主要包括不设置参数（weight、bias）的层与设置参数的层。<br>自定义层:<a href="https://www.bilibili.com/video/BV1AK4y1P7vs?p=3">https://www.bilibili.com/video/BV1AK4y1P7vs?p=3</a></p>
+<h2 id="4-模型文件读写"><a href="#4-模型文件读写" class="headerlink" title="4. 模型文件读写"></a>4. 模型文件读写</h2><p>save： <code>torch.save(net.state_dict(),&#39;fileName&#39;)</code><br>load： <code>newNet.load_state_dict(torch.load(&#39;fileName&#39;))</code></p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">net=MLP()</span><br><span class="line">torch.save(net.state_dict(),<span class="string">&#x27;MLP.params&#x27;</span>) <span class="comment"># save</span></span><br><span class="line">X=torch.randn(size=(<span class="number">2</span>,<span class="number">20</span>))</span><br><span class="line">Y=net(X)</span><br><span class="line">clone = MLP() <span class="comment"># 注意，需要先初始化一个相同的网络</span></span><br><span class="line">clone.load_state_dict(torch.load(<span class="string">&#x27;MLP.params&#x27;</span>)) <span class="comment"># load</span></span><br><span class="line">Y_clone = clone(X)</span><br></pre></td></tr></table></figure>
+
+
+]]></content>
+      <categories>
+        <category>AI</category>
+      </categories>
+      <tags>
+        <tag>pytorch</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>未成年人个人信息保护相关规定</title>
+    <url>/2022/02/15/7_Children&#39;s_Information_Protection_Regulation/</url>
+    <content><![CDATA[<p>国内：《未成年人保护法》、《个人信息保护法》、《儿童个人信息网络保护规定》<br>美国：《儿童在线隐私保护法》（Children’s Online Privacy Protection Act of 1998，COPPA）<br>欧盟：《一般数据保护条例》（General Data Protection Regulation，GDPR）</p>
+<span id="more"></span>
+<p>应注意，目前我国关于未成年人个人信息保护已有较为明确的规定，也形成了自上而下的法律体系，在研究时重点在于<br>· 制度背后的法理是什么？制度设计是否合理<br>· 制度的执行是否明确可行，例如父母提出撤回同意或请求删除孩子个人信息是否方便? 父母或其他监护人怎样了解网络运营者超出目的范围或必要期限收集、存储、使用、转移、披露儿童个人信息?</p>
+<h2>《未成年人保护法》</h2>
+2020年10月17日修订案通过，自2021年6月1日起施行。
+原未成年人保护法是四大保护（家庭保护、学校保护、社会保护和司法保护），此次修订增加了两章，也就是政府保护和网络保护。
+<div class="note info"><p>第二条　本法所称未成年人是指未满十八周岁的公民。</p>
+</div>
+<div class="note info"><p>第四条　保护未成年人，应当坚持最有利于未成年人的原则。处理涉及未成年人事项，应当符合下列要求：<br>　　（一）给予未成年人特殊、优先保护；<br>　　（二）尊重未成年人人格尊严；<br>　　（三）保护未成年人隐私权和个人信息；<br>　　（四）适应未成年人身心健康发展的规律和特点；<br>　　（五）听取未成年人的意见；<br>　　（六）保护与教育相结合。</p>
+</div>
+<div class="note info"><p>第七十二条 信息处理者通过网络处理未成年人个人信息的，应当遵循合法、正当和必要的原则。处理不满十四周岁未成年人个人信息的，应当征得未成年人的父母或者其他监护人同意，但法律、行政法规另有规定的除外。<br>未成年人、父母或者其他监护人要求信息处理者更正、删除未成年人个人信息的，信息处理者应当及时采取措施予以更正、删除，但法律、行政法规另有规定的除外。</p>
+</div>
+<div class="note info"><p>第七十三条 网络服务提供者发现未成年人通过网络发布私密信息的，应当及时提示，并采取必要的保护措施。</p>
+</div>
+
+<h2>《个人信息保护法》</h2>
+2021年8月20日通过，2021年11月1日起实施。
+<div class="note info"><p>第二十八条 敏感个人信息是一旦泄露或者非法使用，容易导致自然人的人格尊严受到侵害或者人身、财产安全受到危害的个人信息,包括生物识别、宗教信仰、特定身份、医疗健康、金融账户、行踪轨迹等信息，以及不满十四周岁未成年人的个人信息。<br>只有在具有特定的目的和充分的必要性，并采取严格保护措施的情形下，个人信息处理者方可处理敏感个人信息。</p>
+</div>
+<div class="note info"><p>第二十九条 处理敏感个人信息应当取得个人的单独同意；法律、行政法规规定处理敏感个人信息应当取得书面同意的，从其规定。</p>
+</div>
+<div class="note info"><p>第三十条 个人信息处理者处理敏感个人信息的，除本法第十七条第一款规定的事项外，还应当向个人告知处理敏感个人信息的必要性以及对个人权益的影响；依照本法规定可以不向个人告知的除外。</p>
+</div>
+<div class="note info"><p>第三十一条 个人信息处理者处理不满十四周岁未成年人个人信息的，应当取得未成年人的父母或者其他监护人的同意。<br>个人信息处理者处理不满十四周岁未成年人个人信息的，应当制定专门的个人信息处理规则。</p>
+</div>
+
+<h2>《儿童个人信息网络保护规定》</h2>
+国家互联网信息办公室令第4号，2019年8月22日公布，自2019年10月1日起实施。在此之前，我国没有专门针对未成年人个人信息保护的立法。详见 http://www.gov.cn/xinwen/2019-08/23/content_5423865.htm
+
+<h2>《网络安全法》</h2>
+2016年11月7日通过，2017年6月1日起施行
+
+<h2>《信息安全技术公共及商用服务信息系统个人信息保护指南》</h2>
+由全国信息安全标准化技术委员会2012年11月出台。
+<div class="note info"><p>第5.2.7 条规定，“不直接向未满16 周岁的未成年人等限制民事行为能力或无行为能力人收集个人敏感信息，确需收集其个人敏感信息的，要征得其法定监护人的明示同意。”</p>
+</div>
+<h2>国家标准GB /T352273 – 2017《信息安全技术—个人信息安全规范》</h2>
+2017 年12 月发布。
+<div class="note info"><p>第5.5条c项规定，“收集年满14周岁的未成年人的个人信息前，应征得未成年人或其监护人的明示同意; 不满14 周岁的，应征得其监护人的明示同意”。</p>
+</div>
+这些文件的规定相对较为全面，但仅具有一般的行业约束力和指导性价值，不具有法律强制力，难以得到有效执行。
+
+<h2>欧盟：《一般数据保护条例》（GDPR）</h2>
+General Data Protection Regulation，GDPR，2018年5月25日生效。
+<div class="note info"><p>第八条 信息社会服务中儿童同意的适用条件 </p>
+<ol>
+<li>在向儿童直接提供信息社会服务的情形中适用本条例第6条第1款(a)项的规定时，只有 对年龄不小于16周岁的儿童的个人数据进行的处理行为才是合法的。对年龄不满16周岁的儿童，处理行为只有或至少在获取了该儿童的监护人的同意或授权时才是合法的。 成员国出于特定目的可以在法律上规定更加低的年龄界限，但是不得低于13周岁。 </li>
+<li>数据控制者应当考虑可利用的技术并作出合理的努力以核实在涉及儿童的情形中该儿童的监护人给予同意或授权的情况。 </li>
+<li>本条第1款的规定不得影响成员国一般合同法的适用，如涉及儿童的关于合同有效性、 合同成立或合同效力的规定。</li>
+</ol>
+</div>
+<div class="note info"><p>第十二条 信息与通信的透明以及数据主体行使权利的形式<br>1.数据控制者应当采取适当的措施将第 13 条和第 14 条规定的信息和第 15 至 22 条以及第 34 条规定的有关数据处理的通信通过清晰易懂的语言以一种简洁明了、透明以及易获得的形式提供给数据主体，尤其是专门针对儿童的信息，使用清楚的语言。这些信息应当以 书面或者其他的方式提供，包括使用电子方式。在数据主体的身份可被其他方式证实时，若 数据主体提出要求，控制者也可以通过口头方式提供信息。</p>
+</div>
+<div class="note info"><p>第五十七条 职责<br>1.在不影响本条例规定的其他职责的前提下，各监管机构应当在其领土范围内履行以下职责：<br>（b） 提高公众对于个人数据处理相关的风险、规则、保障措施和权利的认知和理解。专门 针对儿童的活动还应得到特别关注；</p>
+</div>
+
+<h2>美国《儿童在线隐私保护法》（COPPA）</h2>
+Children's Online Privacy Protection Act of 1998，COPPA，2000年4月21日生效。
+<div class="note info"><p>主要内容：（详见：<a href="https://zhuanlan.zhihu.com/p/149459615%EF%BC%89">https://zhuanlan.zhihu.com/p/149459615）</a><br>    个人信息的定义与举例<br>    如何判定商业网站或线上服务是针对儿童的<br>    基本要求<br>    通知<br>    可验证的监护人同意<br>    监护人检查儿童提供的个人信息的权利<br>    禁止以收集个人信息为条件限制儿童参与线上活动<br>    儿童个人信息的保密、安全和完整性<br>    数据保留和删除要求</p>
+</div>
+
+]]></content>
+      <categories>
+        <category>Law</category>
+      </categories>
+      <tags>
+        <tag>个人信息保护</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>hexo+next 一些特定的样式</title>
     <url>/2022/01/10/6_advancedcss/</url>
     <content><![CDATA[<blockquote class="blockquote-center">
@@ -192,68 +264,6 @@
       </categories>
       <tags>
         <tag>life</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>未成年人个人信息保护相关规定</title>
-    <url>/2022/02/15/7_Children&#39;s_Information_Protection_Regulation/</url>
-    <content><![CDATA[<p>国内：《未成年人保护法》、《个人信息保护法》、《儿童个人信息网络保护规定》<br>美国：《儿童在线隐私保护法》（Children’s Online Privacy Protection Act of 1998，COPPA）<br>欧盟：《一般数据保护条例》（General Data Protection Regulation，GDPR）</p>
-<span id="more"></span>
-
-<h2>《未成年人保护法》</h2>
-2020年10月17日修订案通过，自2021年6月1日起施行。
-原未成年人保护法是四大保护（家庭保护、学校保护、社会保护和司法保护），此次修订增加了两章，也就是政府保护和网络保护。
-<div class="note info"><p>第二条　本法所称未成年人是指未满十八周岁的公民。</p>
-</div>
-<div class="note info"><p>第四条　保护未成年人，应当坚持最有利于未成年人的原则。处理涉及未成年人事项，应当符合下列要求：<br>　　（一）给予未成年人特殊、优先保护；<br>　　（二）尊重未成年人人格尊严；<br>　　（三）保护未成年人隐私权和个人信息；<br>　　（四）适应未成年人身心健康发展的规律和特点；<br>　　（五）听取未成年人的意见；<br>　　（六）保护与教育相结合。</p>
-</div>
-<div class="note info"><p>第七十二条 信息处理者通过网络处理未成年人个人信息的，应当遵循合法、正当和必要的原则。处理不满十四周岁未成年人个人信息的，应当征得未成年人的父母或者其他监护人同意，但法律、行政法规另有规定的除外。<br>未成年人、父母或者其他监护人要求信息处理者更正、删除未成年人个人信息的，信息处理者应当及时采取措施予以更正、删除，但法律、行政法规另有规定的除外。</p>
-</div>
-<div class="note info"><p>第七十三条 网络服务提供者发现未成年人通过网络发布私密信息的，应当及时提示，并采取必要的保护措施。</p>
-</div>
-
-<h2>《个人信息保护法》</h2>
-2021年8月20日通过，2021年11月1日起实施。
-<div class="note info"><p>第二十八条 敏感个人信息是一旦泄露或者非法使用，容易导致自然人的人格尊严受到侵害或者人身、财产安全受到危害的个人信息,包括生物识别、宗教信仰、特定身份、医疗健康、金融账户、行踪轨迹等信息，以及不满十四周岁未成年人的个人信息。<br>只有在具有特定的目的和充分的必要性，并采取严格保护措施的情形下，个人信息处理者方可处理敏感个人信息。</p>
-</div>
-<div class="note info"><p>第二十九条 处理敏感个人信息应当取得个人的单独同意；法律、行政法规规定处理敏感个人信息应当取得书面同意的，从其规定。</p>
-</div>
-<div class="note info"><p>第三十条 个人信息处理者处理敏感个人信息的，除本法第十七条第一款规定的事项外，还应当向个人告知处理敏感个人信息的必要性以及对个人权益的影响；依照本法规定可以不向个人告知的除外。</p>
-</div>
-<div class="note info"><p>第三十一条 个人信息处理者处理不满十四周岁未成年人个人信息的，应当取得未成年人的父母或者其他监护人的同意。<br>个人信息处理者处理不满十四周岁未成年人个人信息的，应当制定专门的个人信息处理规则。</p>
-</div>
-
-<h2>《儿童个人信息网络保护规定》</h2>
-国家互联网信息办公室令第4号，2019年8月22日公布，自2019年10月1日起实施。详见 http://www.gov.cn/xinwen/2019-08/23/content_5423865.htm
-
-<h2>《网络安全法》</h2>
-2016年11月7日通过，2017年6月1日起施行
-
-<h2>欧盟：《一般数据保护条例》（GDPR）</h2>
-General Data Protection Regulation，GDPR，2018年5月25日生效。
-<div class="note info"><p>第八条 信息社会服务中儿童同意的适用条件 </p>
-<ol>
-<li>在向儿童直接提供信息社会服务的情形中适用本条例第6条第1款(a)项的规定时，只有 对年龄不小于16周岁的儿童的个人数据进行的处理行为才是合法的。对年龄不满16周岁的儿童，处理行为只有或至少在获取了该儿童的监护人的同意或授权时才是合法的。 成员国出于特定目的可以在法律上规定更加低的年龄界限，但是不得低于13周岁。 </li>
-<li>数据控制者应当考虑可利用的技术并作出合理的努力以核实在涉及儿童的情形中该儿童的监护人给予同意或授权的情况。 </li>
-<li>本条第1款的规定不得影响成员国一般合同法的适用，如涉及儿童的关于合同有效性、 合同成立或合同效力的规定。</li>
-</ol>
-</div>
-<div class="note info"><p>第十二条 信息与通信的透明以及数据主体行使权利的形式<br>1.数据控制者应当采取适当的措施将第 13 条和第 14 条规定的信息和第 15 至 22 条以及第 34 条规定的有关数据处理的通信通过清晰易懂的语言以一种简洁明了、透明以及易获得的形式提供给数据主体，尤其是专门针对儿童的信息，使用清楚的语言。这些信息应当以 书面或者其他的方式提供，包括使用电子方式。在数据主体的身份可被其他方式证实时，若 数据主体提出要求，控制者也可以通过口头方式提供信息。</p>
-</div>
-<div class="note info"><p>第五十七条 职责<br>1.在不影响本条例规定的其他职责的前提下，各监管机构应当在其领土范围内履行以下职责：<br>（b） 提高公众对于个人数据处理相关的风险、规则、保障措施和权利的认知和理解。专门 针对儿童的活动还应得到特别关注；</p>
-</div>
-
-<h2>美国《儿童在线隐私保护法》（COPPA）</h2>
-Children's Online Privacy Protection Act of 1998，COPPA，2000年4月21日生效。
-<div class="note info"><p>主要内容：（详见：<a href="https://zhuanlan.zhihu.com/p/149459615%EF%BC%89">https://zhuanlan.zhihu.com/p/149459615）</a><br>    个人信息的定义与举例<br>    如何判定商业网站或线上服务是针对儿童的<br>    基本要求<br>    通知<br>    可验证的监护人同意<br>    监护人检查儿童提供的个人信息的权利<br>    禁止以收集个人信息为条件限制儿童参与线上活动<br>    儿童个人信息的保密、安全和完整性<br>    数据保留和删除要求</p>
-</div>
-
-]]></content>
-      <categories>
-        <category>Law</category>
-      </categories>
-      <tags>
-        <tag>个人信息保护</tag>
       </tags>
   </entry>
   <entry>
